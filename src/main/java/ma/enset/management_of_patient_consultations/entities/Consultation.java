@@ -4,7 +4,7 @@ package ma.enset.management_of_patient_consultations.entities;
 import java.sql.Date;
 
 public class Consultation {
-    private int Consultation_Id;
+    private long Consultation_Id;
     private Date Consultation_Date;
     private String Description;
     private Patient Patient;
@@ -19,11 +19,11 @@ public class Consultation {
         Patient = patient;
     }
 
-    public int getConsultation_Id() {
+    public long getConsultation_Id() {
         return Consultation_Id;
     }
 
-    public void setConsultation_Id(int consultation_Id) {
+    public void setConsultation_Id(Long consultation_Id) {
         Consultation_Id = consultation_Id;
     }
 

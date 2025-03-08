@@ -20,8 +20,7 @@ public class Consultation_DAO implements IConsultation_DAO {
         preparedstatement.setString(2, consultation.getDescription());
         preparedstatement.setLong(3, consultation.getPatient().getPatient_ID());
         preparedstatement.executeUpdate();
-
-    }
+    };
 
     @Override
     public void Update(Consultation consultation) throws SQLException {
@@ -52,7 +51,7 @@ public class Consultation_DAO implements IConsultation_DAO {
         Patient_DAO patient_DAO = new Patient_DAO();
         while (resultSet.next()) {
             Consultation consultation = new Consultation();
-            consultation.setConsultation_Id(resultSet.getInt("Consultation_Id"));
+            consultation.setConsultation_Id(resultSet.getLong("Consultation_Id"));
             consultation.setConsultation_Date(resultSet.getDate("Consultation_Date"));
             consultation.setDescription(resultSet.getString("Description"));
             long PatientIndex = resultSet.getLong("PatientId");
@@ -72,7 +71,7 @@ public class Consultation_DAO implements IConsultation_DAO {
         Consultation consultation = new Consultation();
         Patient_DAO patient_DAO = new Patient_DAO();
         if (resultSet.next()) {
-            consultation.setConsultation_Id(resultSet.getInt("Consultation_Id"));
+            consultation.setConsultation_Id(resultSet.getLong("Consultation_Id"));
             consultation.setConsultation_Date(resultSet.getDate("Consultation_Date"));
             consultation.setDescription(resultSet.getString("Description"));
             long PatientIndex = resultSet.getLong("PatientId");
