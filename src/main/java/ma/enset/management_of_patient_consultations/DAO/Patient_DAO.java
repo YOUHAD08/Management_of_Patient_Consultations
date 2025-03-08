@@ -67,7 +67,7 @@ public class Patient_DAO implements IPatient_DAO {
         ResultSet resultSet = preparedstatement.executeQuery();
         Patient patient = new Patient();
         if (resultSet.next()) {
-            patient.setPatient_ID(resultSet.getLong("PATIENT_ID"));
+            patient.setPatient_ID(resultSet.getLong("Patient_Id"));
             patient.setFirst_Name(resultSet.getString("First_Name"));
             patient.setLast_Name(resultSet.getString("Last_Name"));
             patient.setTel(resultSet.getString("Tel"));
