@@ -2,15 +2,14 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
     <Tab text="Patients">
-      <fx:include source="patient_view.fxml"/>
+      <fx:include source="patient_view.fxml" />
     </Tab>
     <Tab text="Consultation">
-      <fx:include source="Consultation_view.fxml"/>
+      <fx:include source="Consultation_view.fxml" />
     </Tab>
   </tabs>
 </TabPane>

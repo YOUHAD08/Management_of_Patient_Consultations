@@ -62,13 +62,7 @@ public class Patient {
 
     @Override
     public String toString() {
-        return "Patient{" +
-                "Patient_ID=" + Patient_ID +
-                ", First_Name='" + First_Name + '\'' +
-                ", Last_Name='" + Last_Name + '\'' +
-                ", Tel='" + Tel + '\'' +
-                ", Address='" + Address + '\'' +
-                '}';
+        return First_Name + " " + Last_Name  ;
     }
 
     public List<Consultation> getConsultations() {
