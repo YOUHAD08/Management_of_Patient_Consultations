@@ -1,8 +1,6 @@
 package ma.enset.management_of_patient_consultations.DAO;
 
 import ma.enset.management_of_patient_consultations.entities.Consultation;
-import ma.enset.management_of_patient_consultations.entities.Patient;
-
 import java.sql.SQLException;
 import java.util.List;
 

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Management_of_patient_consultations:jar">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="Management_of_patient_consultations_jar.jar">
+      <element id="module-output" name="Management_of_patient_consultations" />
+    </root>
+  </artifact>
+</component>
