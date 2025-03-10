@@ -36,7 +36,7 @@ public class Consultation_DAO implements IConsultation_DAO {
     @Override
     public void Delete(Consultation consultation) throws SQLException {
         Connection connection = DBConnection.getConnection();
-        PreparedStatement preparedstatement = connection.prepareStatement("DELETE * FROM Consultation WHERE Consultation_Id=?");
+        PreparedStatement preparedstatement = connection.prepareStatement("DELETE FROM Consultation WHERE Consultation_Id=?");
         preparedstatement.setLong(1, consultation.getConsultation_Id());
         preparedstatement.executeUpdate();
 
@@ -79,4 +79,51 @@ public class Consultation_DAO implements IConsultation_DAO {
         }
         return consultation;
     }
+
+    @Override
+    public List<Consultation> searchByQuery(String query) throws SQLException {
+
+        Connection connection = DBConnection.getConnection();
+        Patient_DAO patient_DAO = new Patient_DAO();
+
+        // Get list of patients matching the query
+        List<Patient> selectedPatients = patient_DAO.searchByQuery(query);
+
+        // ✅ Prevent empty SQL error
+        if (selectedPatients.isEmpty()) {
+            return new ArrayList<>(); // Return empty list instead of running invalid SQL
+        }
+
+        StringBuilder sqlquery = new StringBuilder("SELECT * FROM consultation WHERE PatientId IN (");
+        for (int i = 0; i < selectedPatients.size(); i++) {
+            sqlquery.append("?"); // Add placeholders for Patient IDs
+            if (i < selectedPatients.size() - 1) {
+                sqlquery.append(","); // Add commas between placeholders
+            }
+        }
+        sqlquery.append(")");
+        PreparedStatement preparedstatement = connection.prepareStatement(sqlquery.toString());
+
+        for (int i = 0; i < selectedPatients.size(); i++) {
+            preparedstatement.setLong(i + 1, selectedPatients.get(i).getPatient_ID());
+        }
+
+        ResultSet resultSet = preparedstatement.executeQuery();
+
+        List<Consultation> consultations = new ArrayList<>();
+
+        while (resultSet.next()) {
+            Consultation consultation = new Consultation ();
+            consultation.setConsultation_Id(resultSet.getLong("Consultation_Id"));
+            consultation.setConsultation_Date(resultSet.getDate("Consultation_Date"));
+            consultation.setDescription(resultSet.getString("Description"));
+            long PatientIndex = resultSet.getLong("PatientId");
+            consultation.setPatient(patient_DAO.getById(PatientIndex));
+
+            consultations.add(consultation);
+
+        }
+        return consultations ;
+    }
+
 }

@@ -138,4 +138,16 @@ public class CabinetService implements ICabinetService {
         }
         return consultations;
     }
+
+    public List<Consultation> searchConsultationByQuery(String query) {
+        List<Consultation> consultations = new ArrayList<Consultation>();
+        try {
+            consultations = consultation_DAO.searchByQuery(query);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return consultations ;
+    }
 }

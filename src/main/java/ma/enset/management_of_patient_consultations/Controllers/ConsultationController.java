@@ -23,16 +23,17 @@ public class ConsultationController implements Initializable {
     @FXML public DatePicker ConsultationDate;
     @FXML public ComboBox<Patient> ComboPatient;
     @FXML public TextArea TextAreaDescription;
-    @FXML public TextField TextFieldConsultation;
+    @FXML public TextField TextFieldSearch;
     @FXML public TableView<Consultation> TableConsultation;
     @FXML public TableColumn<Consultation,Long> ColumnId;
     @FXML public TableColumn<Consultation, DatePicker> ColumnConsultationDate;
     @FXML public TableColumn<Consultation, TextArea > ColumnDescription;
     @FXML public TableColumn<Consultation,Patient> ColumnPatient;
 
-    private ObservableList<Consultation> consultations = FXCollections.observableArrayList();
+    private static ObservableList<Consultation> consultations = FXCollections.observableArrayList();
     private static ObservableList<Patient> patients = FXCollections.observableArrayList();
     private static ICabinetService cabinetService ;
+    private Consultation selectedConsultation;
 
     public void AddConsultation() {
 
@@ -52,31 +53,49 @@ public class ConsultationController implements Initializable {
             Consultation consultation = new Consultation(consultationdate, consultationdescription, patient);
             cabinetService.addConsultation(consultation);
             loadConsultations();
-            ConsultationDate.setValue(null);
-            TextAreaDescription.clear();
-            ComboPatient.setValue(null);
+            clearFields();
         }
     }
 
     public void DeleteConsultation() {
         Consultation consultation = TableConsultation.getSelectionModel().getSelectedItem();
+        System.out.println(consultation);
         if (consultation == null) {
             showAlert("Consultation not found", "Consultation not found");
         }
         else {
             cabinetService.deleteConsultation(consultation);
             loadConsultations();
+            clearFields();
         }
     }
 
-    public void SearchConsultation() {
-    }
-
     public void UpdateConsultation() {
+
+        if (selectedConsultation == null) {
+            showAlert("Error", "No consultation selected to update.");
+            return;
+        }
+
+        LocalDate localDate = ConsultationDate.getValue();
+        if (localDate == null || selectedConsultation.getPatient() == null || selectedConsultation.getDescription().isEmpty()) {
+            showAlert("Error", "Please fill all the fields. ");
+            return;
+        }
+        Date consultationdate = Date.valueOf(localDate);
+        selectedConsultation.setConsultation_Date(consultationdate);
+        selectedConsultation.setDescription(TextAreaDescription.getText());
+        selectedConsultation.setPatient(ComboPatient.getSelectionModel().getSelectedItem());
+
+        cabinetService.updateConsultation(selectedConsultation);
+        loadConsultations();
+        clearFields();
+
     }
 
-    private void loadConsultations() {
+    static void loadConsultations() {
         consultations.setAll(cabinetService.getAllConsultations());
+
 
     }
     static void loadPatients() {
@@ -88,14 +107,17 @@ public class ConsultationController implements Initializable {
         alert.setContentText(message);
         alert.show();
     }
+    private void clearFields() {
+        ConsultationDate.setValue(null);
+        TextAreaDescription.clear();
+        ComboPatient.setValue(null);
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cabinetService = new CabinetService(new Patient_DAO(), new Consultation_DAO());
 
-
         patients.setAll(cabinetService.getAllPatients());
         ComboPatient.setItems(patients);
-
 
         ColumnId.setCellValueFactory(new PropertyValueFactory<>("Consultation_Id"));
         ColumnConsultationDate.setCellValueFactory(new PropertyValueFactory<>("Consultation_Date"));
@@ -103,5 +125,19 @@ public class ConsultationController implements Initializable {
         ColumnPatient.setCellValueFactory(new PropertyValueFactory<>("Patient"));
         consultations.setAll(cabinetService.getAllConsultations());
         TableConsultation.setItems(consultations);
+
+        TextFieldSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            consultations.setAll(cabinetService.searchConsultationByQuery(newValue)) ;
+        });
+        TableConsultation.getSelectionModel().selectedItemProperty().addListener((observable, oldValueConsultation, newValueConsultation) -> {
+            if(newValueConsultation != null) {
+
+                LocalDate localDate = newValueConsultation.getConsultation_Date().toLocalDate();
+                ConsultationDate.setValue(localDate);
+                TextAreaDescription.setText(newValueConsultation.getDescription());
+                ComboPatient.setValue(newValueConsultation.getPatient());
+                selectedConsultation=newValueConsultation;
+            }
+        });
     }
 }

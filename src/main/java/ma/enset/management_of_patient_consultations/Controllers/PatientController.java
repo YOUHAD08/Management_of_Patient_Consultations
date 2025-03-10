@@ -12,11 +12,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ma.enset.management_of_patient_consultations.DAO.Consultation_DAO;
 import ma.enset.management_of_patient_consultations.DAO.Patient_DAO;
+import ma.enset.management_of_patient_consultations.entities.Consultation;
 import ma.enset.management_of_patient_consultations.entities.Patient;
 import ma.enset.management_of_patient_consultations.service.CabinetService;
 import ma.enset.management_of_patient_consultations.service.ICabinetService;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PatientController implements Initializable {
@@ -52,10 +54,7 @@ public class PatientController implements Initializable {
             Patient patient = new Patient(firstName,lastName,tel,address);
             cabinetService.addPatient(patient);
             loadPatients();
-            TextFieldFirstName.clear();
-            TextFieldLastName.clear();
-            TextFieldTel.clear();
-            TextFieldAddress.clear();
+            clearFields();
         }
     }
 
@@ -67,28 +66,40 @@ public class PatientController implements Initializable {
         else {
             cabinetService.deletePatient(patient);
             loadPatients();
+            clearFields();
         }
-    }
-
-    public void SearchPatient(ActionEvent actionEvent) {
     }
 
     public void UpdatePatient() {
 
-        selectedPatient.setFirst_Name(TextFieldFirstName.getText());
-        selectedPatient.setLast_Name(TextFieldLastName.getText());
-        selectedPatient.setTel(TextFieldTel.getText());
-        selectedPatient.setAddress(TextFieldAddress.getText());
-        System.out.println(selectedPatient);
+        if (selectedPatient == null) {
+            showAlert("Patient not found", "Please select a Patient");
+        }
+        else {
+            selectedPatient.setFirst_Name(TextFieldFirstName.getText());
+            selectedPatient.setLast_Name(TextFieldLastName.getText());
+            selectedPatient.setTel(TextFieldTel.getText());
+            selectedPatient.setAddress(TextFieldAddress.getText());
 
-        cabinetService.updatePatient(selectedPatient);
+            cabinetService.updatePatient(selectedPatient);
 
-        loadPatients();
+            loadPatients();
+            clearFields();
+        }
     }
+
 
     private void loadPatients() {
         patients.setAll(cabinetService.getAllPatients());
         ConsultationController.loadPatients();
+        ConsultationController.loadConsultations();
+    }
+
+    private void clearFields() {
+        TextFieldFirstName.clear();
+        TextFieldLastName.clear();
+        TextFieldTel.clear();
+        TextFieldAddress.clear();
     }
 
     private void showAlert(String title, String message) {
@@ -101,6 +112,7 @@ public class PatientController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cabinetService = new CabinetService(new Patient_DAO(), new Consultation_DAO());
+
         ColumnId.setCellValueFactory(new PropertyValueFactory<>("Patient_ID"));
         ColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("First_Name"));
         ColumnLastName.setCellValueFactory(new PropertyValueFactory<>("Last_Name"));
@@ -108,6 +120,7 @@ public class PatientController implements Initializable {
         ColumnAddress.setCellValueFactory(new PropertyValueFactory<>("Address"));
         patients.setAll(cabinetService.getAllPatients());
         tablePatients.setItems(patients);
+
         TextFieldSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             patients.setAll(cabinetService.searchPatientByQuery(newValue)) ;
         });

@@ -19,5 +19,6 @@ public interface ICabinetService {
     void deleteConsultation(Consultation consultation);
     Consultation getConsultationById(Long id);
     List<Consultation> getAllConsultations();
+    List<Consultation> searchConsultationByQuery(String query);
 
 }
