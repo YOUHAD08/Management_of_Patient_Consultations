@@ -73,6 +73,19 @@ public class CabinetService implements ICabinetService {
     }
 
     @Override
+    public List<Patient> searchPatientByQuery(String query) {
+        List<Patient> patients = new ArrayList<Patient>();
+        try {
+            patients = patient_DAO.searchByQuery(query);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return patients ;
+    }
+
+    @Override
     public void addConsultation(Consultation consultation) {
         try {
             consultation_DAO.Create(consultation);

@@ -34,6 +34,7 @@ public class PatientController implements Initializable {
     //Model
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     private ICabinetService cabinetService ;
+    private Patient selectedPatient;
 
 
     public void AddPatient() {
@@ -73,12 +74,16 @@ public class PatientController implements Initializable {
     }
 
     public void UpdatePatient() {
-        Patient patient = tablePatients.getSelectionModel().getSelectedItem();
-        if (patient == null) {
-            showAlert("Patient not found", "Please select a Patient");
-        }
-        else {
-        }
+
+        selectedPatient.setFirst_Name(TextFieldFirstName.getText());
+        selectedPatient.setLast_Name(TextFieldLastName.getText());
+        selectedPatient.setTel(TextFieldTel.getText());
+        selectedPatient.setAddress(TextFieldAddress.getText());
+        System.out.println(selectedPatient);
+
+        cabinetService.updatePatient(selectedPatient);
+
+        loadPatients();
     }
 
     private void loadPatients() {
@@ -103,6 +108,18 @@ public class PatientController implements Initializable {
         ColumnAddress.setCellValueFactory(new PropertyValueFactory<>("Address"));
         patients.setAll(cabinetService.getAllPatients());
         tablePatients.setItems(patients);
+        TextFieldSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            patients.setAll(cabinetService.searchPatientByQuery(newValue)) ;
+        });
+        tablePatients.getSelectionModel().selectedItemProperty().addListener((observable, oldValuePatient, newValuePatient) -> {
+            if(newValuePatient != null) {
+                TextFieldFirstName.setText(newValuePatient.getFirst_Name());
+                TextFieldLastName.setText(newValuePatient.getLast_Name());
+                TextFieldTel.setText(newValuePatient.getTel());
+                TextFieldAddress.setText(newValuePatient.getAddress());
+                selectedPatient=newValuePatient;
+            }
+        });
     }
 }
 

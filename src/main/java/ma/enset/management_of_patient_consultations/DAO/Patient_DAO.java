@@ -25,12 +25,13 @@ public class Patient_DAO implements IPatient_DAO {
     @Override
     public void Update(Patient patient) throws SQLException {
         Connection connection = DBConnection.getConnection();
-        PreparedStatement preparedstatement = connection.prepareStatement("UPDATE PATIENTS SET First_Name=?,Last_Name=?, Tel=?, Address=? WHERE PATIENT_ID=?");
+        PreparedStatement preparedstatement = connection.prepareStatement("UPDATE PATIENTS SET First_Name=?,Last_Name=?, Tel=?, Address=? WHERE Patient_Id=?");
         preparedstatement.setString(1, patient.getFirst_Name());
         preparedstatement.setString(2, patient.getLast_Name());
         preparedstatement.setString(3, patient.getTel());
         preparedstatement.setString(4, patient.getAddress());
         preparedstatement.setLong(5, patient.getPatient_ID());
+        preparedstatement.executeUpdate();
     }
 
     @Override
@@ -74,5 +75,25 @@ public class Patient_DAO implements IPatient_DAO {
             patient.setAddress(resultSet.getString("Address"));
         }
         return patient;
+    }
+
+    @Override
+    public List<Patient> searchByQuery(String query) throws SQLException {
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement preparedstatement = connection.prepareStatement("SELECT * FROM PATIENTS WHERE First_Name LIKE ? OR Last_Name LIKE ?");
+        preparedstatement.setString(1, "%" + query + "%");
+        preparedstatement.setString(2, "%" + query + "%");
+        ResultSet resultSet = preparedstatement.executeQuery();
+        List<Patient> patients = new ArrayList<>();
+        while (resultSet.next()) {
+            Patient patient = new Patient();
+            patient.setPatient_ID(resultSet.getLong("PATIENT_ID"));
+            patient.setFirst_Name(resultSet.getString("First_Name"));
+            patient.setLast_Name(resultSet.getString("Last_Name"));
+            patient.setTel(resultSet.getString("Tel"));
+            patient.setAddress(resultSet.getString("Address"));
+            patients.add(patient);
+        }
+        return patients ;
     }
 }

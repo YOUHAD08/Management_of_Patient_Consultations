@@ -30,7 +30,7 @@ public class Consultation_DAO implements IConsultation_DAO {
         preparedstatement.setString(2, consultation.getDescription());
         preparedstatement.setLong(3, consultation.getPatient().getPatient_ID());
         preparedstatement.setLong(4, consultation.getConsultation_Id());
-
+        preparedstatement.executeUpdate();
     }
 
     @Override

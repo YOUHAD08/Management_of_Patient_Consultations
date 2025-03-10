@@ -12,6 +12,7 @@ public interface ICabinetService {
     void deletePatient(Patient patient);
     Patient getPatientById(Long id);
     List<Patient> getAllPatients();
+    List<Patient> searchPatientByQuery(String query);
 
     void addConsultation(Consultation consultation);
     void updateConsultation(Consultation consultation);
